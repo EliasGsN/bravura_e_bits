@@ -2,7 +2,7 @@
 -- desc:    RPG de acao 2D
 -- script:  lua
 jogador = {
-    sprite = 256,
+    sprite = 260,
     x = 120,
     y = 68,
     corDeFundo = 2,
@@ -26,61 +26,65 @@ function temColisaoComMapa(ponto)
     end
 end
 
-function moverPara(meuDeslocamentoX, meuDeslocamentoY)
+function moverPara(delta)
+
     superiorEsquerdo = {
-        x = jogador.x - 8 + meuDeslocamentoX,
-        y = jogador.y - 8 + meuDeslocamentoY
+        x = jogador.x - 8 + delta.deltaX,
+        y = jogador.y - 8 + delta.deltaY
     }
     superiorDireito = {
-        x = jogador.x + 7 + meuDeslocamentoX,
-        y = jogador.y - 8 + meuDeslocamentoY
+        x = jogador.x + 7 + delta.deltaX,
+        y = jogador.y - 8 + delta.deltaY
     }
     inferiorDireito = {
-        x = jogador.x + 7 + meuDeslocamentoX,
-        y = jogador.y + 7 + meuDeslocamentoY
+        x = jogador.x + 7 + delta.deltaX,
+        y = jogador.y + 7 + delta.deltaY
     }
     inferiorEsquerdo = {
-        x = jogador.x - 8 + meuDeslocamentoX,
-        y = jogador.y + 7 + meuDeslocamentoY
+        x = jogador.x - 8 + delta.deltaX,
+        y = jogador.y + 7 + delta.deltaY
     }
 
-    if temColisaoComMapa(superiorEsquerdo) or temColisaoComMapa(superiorDireito) or temColisaoComMapa(inferiorEsquerdo) or
-        temColisaoComMapa(inferiorDireito) then
-        -- Colisao!!!
-    else
+    if not (temColisaoComMapa(superiorEsquerdo) or temColisaoComMapa(superiorDireito) or
+        temColisaoComMapa(inferiorEsquerdo) or temColisaoComMapa(inferiorDireito)) then
+
         jogador.quadroDeAnimacao = jogador.quadroDeAnimacao + Constantes.VELOCIDADE_ANIMACAO_JOGADOR
         if jogador.quadroDeAnimacao >= 3 then
             jogador.quadroDeAnimacao = 1
         end
-        jogador.y = jogador.y + meuDeslocamentoY
-        jogador.x = jogador.x + meuDeslocamentoX
+        jogador.y = jogador.y + delta.deltaY
+        jogador.x = jogador.x + delta.deltaX
     end
 end
 
 function atualiza()
 
-    AnimacoesPersonagem = {{256, 258}, {260, 262}, {264, 266}, {268, 270}}
+    Direcao = {{
+        deltaX = 0,
+        deltaY = -1
+    }, {
+        deltaX = 0,
+        deltaY = 1
+    }, {
+        deltaX = -1,
+        deltaY = 0
+    }, {
+        deltaX = 1,
+        deltaY = 0
+    }}
 
-    -- cima
-    if btn(0) then
-        jogador.sprite = AnimacoesPersonagem[1][math.floor(jogador.quadroDeAnimacao)]
-        moverPara(0, -1)
+    AnimacaoJogador = {{256, 258}, {260, 262}, {264, 266}, {268, 270}}
+
+    for tecla = 0, 3 do
+        if btn(tecla) then
+            quadros = AnimacaoJogador[tecla + 1]
+            quadro = math.floor(jogador.quadroDeAnimacao)
+            jogador.sprite = quadros[quadro]
+
+            moverPara(Direcao[tecla + 1])
+        end
     end
-    -- baixo
-    if btn(1) then
-        jogador.sprite = AnimacoesPersonagem[2][math.floor(jogador.quadroDeAnimacao)]
-        moverPara(0, 1)
-    end
-    -- esquerda
-    if btn(2) then
-        jogador.sprite = AnimacoesPersonagem[3][math.floor(jogador.quadroDeAnimacao)]
-        moverPara(-1, 0)
-    end
-    -- direita
-    if btn(3) then
-        jogador.sprite = AnimacoesPersonagem[4][math.floor(jogador.quadroDeAnimacao)]
-        moverPara(1, 0)
-    end
+
 end
 
 function desenhaMapa()
