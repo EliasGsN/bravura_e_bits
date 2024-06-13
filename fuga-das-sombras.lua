@@ -13,7 +13,9 @@ Constantes = {
 }
 
 function temColisaoComMapa(ponto)
-    blocoId = mget(ponto.x / 8, ponto.y / 8)
+    blocoX = ponto.x / 8
+    blocoY = ponto.y / 8
+    blocoId = mget(blocoX, blocoY)
     if blocoId >= 128 then
         return true
     else
@@ -21,35 +23,49 @@ function temColisaoComMapa(ponto)
     end
 end
 
+function moverPara(meuDeslocamentoX, meuDeslocamentoY)
+    superiorEsquerdo = {
+        x = jogador.x - 8 + meuDeslocamentoX,
+        y = jogador.y - 8 + meuDeslocamentoY
+    }
+    superiorDireito = {
+        x = jogador.x + 7 + meuDeslocamentoX,
+        y = jogador.y - 8 + meuDeslocamentoY
+    }
+    inferiorDireito = {
+        x = jogador.x + 7 + meuDeslocamentoX,
+        y = jogador.y + 7 + meuDeslocamentoY
+    }
+    inferiorEsquerdo = {
+        x = jogador.x - 8 + meuDeslocamentoX,
+        y = jogador.y + 7 + meuDeslocamentoY
+    }
+
+    if temColisaoComMapa(superiorEsquerdo) or temColisaoComMapa(superiorDireito) or temColisaoComMapa(inferiorEsquerdo) or
+        temColisaoComMapa(inferiorDireito) then
+        -- Colisao!!!
+    else
+        jogador.y = jogador.y + meuDeslocamentoY
+        jogador.x = jogador.x + meuDeslocamentoX
+    end
+end
+
 function atualiza()
     -- cima
     if btn(0) then
-        superiorEsquerdo = {
-            x = jogador.x - 8,
-            y = jogador.y - 8 - 1
-        }
-        superiorDireito = {
-            x = jogador.x + 8,
-            y = jogador.y - 8 - 1
-        }
-
-        if temColisaoComMapa(superiorEsquerdo) or temColisaoComMapa(superiorDireito) then
-            -- Colisao!!!
-        else
-            jogador.y = jogador.y - 1
-        end
+        moverPara(0, -1)
     end
     -- baixo
     if btn(1) then
-        jogador.y = jogador.y + 1
+        moverPara(0, 1)
     end
     -- esquerda
     if btn(2) then
-        jogador.x = jogador.x - 1
+        moverPara(-1, 0)
     end
     -- direita
     if btn(3) then
-        jogador.x = jogador.x + 1
+        moverPara(1, 0)
     end
 end
 
@@ -63,7 +79,8 @@ function desenhaMapa()
 end
 
 function desenhaJogador()
-    spr(jogador.sprite, jogador.x - 8, jogador.y - 8, 0, -- Cor de fundo
+    spr(jogador.sprite, jogador.x - 8, jogador.y - 8, 
+    0, -- Cor de fundo
     1, -- escala
     0, -- espelhar
     0, -- rotacionar
@@ -72,11 +89,9 @@ function desenhaJogador()
 end
 
 function desenha()
-
     cls()
     desenhaMapa()
     desenhaJogador()
-
 end
 
 function TIC()
