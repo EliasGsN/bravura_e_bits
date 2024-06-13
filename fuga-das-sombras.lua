@@ -13,7 +13,9 @@ Constantes = {
 }
 
 function temColisaoComMapa(ponto)
-    blocoId = mget(ponto.x / 8, ponto.y / 8)
+    blocoX = ponto.x / 8
+    blocoY = ponto.y / 8
+    blocoId = mget(blocoX, blocoY)
     if blocoId >= 128 then
         return true
     else
@@ -21,27 +23,42 @@ function temColisaoComMapa(ponto)
     end
 end
 
+function moverVertical(meuDeslocamento)
+    superiorEsquerdo = {
+        x = jogador.x - 8,
+        y = jogador.y - 8 + meuDeslocamento
+    }
+    superiorDireito = {
+        x = jogador.x + 7,
+        y = jogador.y - 8 + meuDeslocamento
+    }
+    inferiorDireito = {
+        x = jogador.x + 7,
+        y = jogador.y + 7 + meuDeslocamento
+    }
+    inferiorEsquerdo = {
+        x = jogador.x - 8,
+        y = jogador.y + 7 + meuDeslocamento
+    }
+
+    if temColisaoComMapa(superiorEsquerdo) or 
+       temColisaoComMapa(superiorDireito) or 
+       temColisaoComMapa(inferiorEsquerdo) or
+       temColisaoComMapa(inferiorDireito) then
+        -- Colisao!!!
+    else
+        jogador.y = jogador.y + meuDeslocamento
+    end
+end
+
 function atualiza()
     -- cima
     if btn(0) then
-        superiorEsquerdo = {
-            x = jogador.x - 8,
-            y = jogador.y - 8 - 1
-        }
-        superiorDireito = {
-            x = jogador.x + 8,
-            y = jogador.y - 8 - 1
-        }
-
-        if temColisaoComMapa(superiorEsquerdo) or temColisaoComMapa(superiorDireito) then
-            -- Colisao!!!
-        else
-            jogador.y = jogador.y - 1
-        end
+        moverVertical(-1)
     end
     -- baixo
     if btn(1) then
-        jogador.y = jogador.y + 1
+        moverVertical(1)
     end
     -- esquerda
     if btn(2) then
