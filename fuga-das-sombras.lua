@@ -97,7 +97,8 @@ function desenhaMapa()
 end
 
 function desenhaJogador()
-    spr(jogador.sprite, jogador.x - 8, jogador.y - 8, jogador.corDeFundo, 1, -- escala
+    spr(jogador.sprite, jogador.x - 8, jogador.y - 8, jogador.corDeFundo, 
+    1, -- escala
     0, -- espelhar
     0, -- rotacionar
     2, -- quantos blocos para direita
