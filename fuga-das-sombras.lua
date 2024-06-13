@@ -6,14 +6,38 @@ jogador = {
     x = 120,
     y = 68
 }
+
 Constantes = {
     LARGURA_DA_TELA = 240,
     ALTURA_DA_TELA = 138
 }
+
+function temColisaoComMapa(ponto)
+    blocoId = mget(ponto.x / 8, ponto.y / 8)
+    if blocoId >= 128 then
+        return true
+    else
+        return false
+    end
+end
+
 function atualiza()
     -- cima
     if btn(0) then
-        jogador.y = jogador.y - 1
+        superiorEsquerdo = {
+            x = jogador.x - 8,
+            y = jogador.y - 8 - 1
+        }
+        superiorDireito = {
+            x = jogador.x + 8,
+            y = jogador.y - 8 - 1
+        }
+
+        if temColisaoComMapa(superiorEsquerdo) or temColisaoComMapa(superiorDireito) then
+            -- Colisao!!!
+        else
+            jogador.y = jogador.y - 1
+        end
     end
     -- baixo
     if btn(1) then
@@ -48,9 +72,11 @@ function desenhaJogador()
 end
 
 function desenha()
+
     cls()
     desenhaMapa()
     desenhaJogador()
+
 end
 
 function TIC()
