@@ -2,9 +2,10 @@
 -- desc:    RPG de acao 2D
 -- script:  lua
 jogador = {
-    sprite = 32,
+    sprite = 256,
     x = 120,
-    y = 68
+    y = 68,
+    corDeFundo = 2
 }
 
 Constantes = {
@@ -51,20 +52,27 @@ function moverPara(meuDeslocamentoX, meuDeslocamentoY)
 end
 
 function atualiza()
+
+    AnimacoesPersonagem = {256, 260, 264, 268}
+
     -- cima
     if btn(0) then
+        jogador.sprite = AnimacoesPersonagem[1]
         moverPara(0, -1)
     end
     -- baixo
     if btn(1) then
+        jogador.sprite = AnimacoesPersonagem[2]
         moverPara(0, 1)
     end
     -- esquerda
     if btn(2) then
+        jogador.sprite = AnimacoesPersonagem[3]
         moverPara(-1, 0)
     end
     -- direita
     if btn(3) then
+        jogador.sprite = AnimacoesPersonagem[4]
         moverPara(1, 0)
     end
 end
@@ -79,9 +87,7 @@ function desenhaMapa()
 end
 
 function desenhaJogador()
-    spr(jogador.sprite, jogador.x - 8, jogador.y - 8, 
-    0, -- Cor de fundo
-    1, -- escala
+    spr(jogador.sprite, jogador.x - 8, jogador.y - 8, jogador.corDeFundo, 1, -- escala
     0, -- espelhar
     0, -- rotacionar
     2, -- quantos blocos para direita
