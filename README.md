@@ -1,4 +1,4 @@
-# Fuga das Sombras
+# Bravura e Bits
 
 ## Descrição
 Este é um jogo RPG de ação 2D desenvolvido em Lua para a plataforma TIC-80.
