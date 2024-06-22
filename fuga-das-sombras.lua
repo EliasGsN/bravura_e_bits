@@ -15,6 +15,8 @@ Constantes = {
     VELOCIDADE_ANIMACAO_JOGADOR = 0.1
 }
 
+objetos = {}
+
 function temColisaoComMapa(ponto)
     blocoX = ponto.x / 8
     blocoY = ponto.y / 8
@@ -45,8 +47,10 @@ function moverPara(delta)
         y = jogador.y + 7 + delta.deltaY
     }
 
-    if not (temColisaoComMapa(superiorEsquerdo) or temColisaoComMapa(superiorDireito) or
-        temColisaoComMapa(inferiorEsquerdo) or temColisaoComMapa(inferiorDireito)) then
+    if not (temColisaoComMapa(superiorEsquerdo) or 
+            temColisaoComMapa(superiorDireito) or
+            temColisaoComMapa(inferiorEsquerdo) or 
+            temColisaoComMapa(inferiorDireito)) then
 
         jogador.quadroDeAnimacao = jogador.quadroDeAnimacao + Constantes.VELOCIDADE_ANIMACAO_JOGADOR
         if jogador.quadroDeAnimacao >= 3 then
@@ -73,7 +77,10 @@ function atualiza()
         deltaY = 0
     }}
 
-    AnimacaoJogador = {{256, 258}, {260, 262}, {264, 266}, {268, 270}}
+    AnimacaoJogador = {{256, 258}, 
+                       {260, 262}, 
+                       {264, 266}, 
+                       {268, 270}}
 
     for tecla = 0, 3 do
         if btn(tecla) then
@@ -97,7 +104,10 @@ function desenhaMapa()
 end
 
 function desenhaJogador()
-    spr(jogador.sprite, jogador.x - 8, jogador.y - 8, jogador.corDeFundo, 
+    spr(jogador.sprite, 
+    jogador.x - 8, 
+    jogador.y - 8, 
+    jogador.corDeFundo, 
     1, -- escala
     0, -- espelhar
     0, -- rotacionar
@@ -105,13 +115,78 @@ function desenhaJogador()
     2) -- quantos blocos para baixo
 end
 
+function desenhaObjetos()
+    for indice, objeto in pairs(objetos) do
+        spr(objeto.sprite, 
+            objeto.x - 8, 
+            objeto.y - 8, 
+            objeto.corDeFundo, 
+            1, 
+            0, 
+            0, 
+            2, 
+            2)
+    end
+end
+
 function desenha()
     cls()
     desenhaMapa()
     desenhaJogador()
+    desenhaObjetos()
+end
+
+function fazColisaoDoJogadorComAChave(indice)
+    table.remove(objetos, indice)
+end
+
+function temColisao(objetoA, objetoB)
+    local esquerdaDeA = objetoA.x - 8
+    local direitaDeA = objetoA.x + 7
+    local baixoDeA = objetoA.y + 7
+    local cimaDeA = objetoA.y - 8
+
+    local esquerdaDeB = objetoB.x - 8
+    local direitaDeB = objetoB.x + 7
+    local baixoDeB = objetoB.y + 7
+    local cimaDeB = objetoB.y - 8
+
+    if esquerdaDeB > direitaDeA or 
+       direitaDeB < esquerdaDeA or 
+       cimaDeA > baixoDeB or 
+       baixoDeA < cimaDeB then
+       return false
+    end
+    return true
+end
+
+function verificaColisaoComObjetos()
+    for indice, objeto in pairs(objetos) do
+        if temColisao(jogador, objeto) then
+            fazColisaoDoJogadorComAChave(indice)
+        end
+    end
 end
 
 function TIC()
     atualiza()
+    verificaColisaoComObjetos()
     desenha()
 end
+
+function criarChave(coluna, linha)
+    local chave = {
+        sprite = 364,
+        x = coluna * 8 + 8,
+        y = linha * 8 + 8,
+        corDeFundo = 2
+    }
+    return chave
+end
+
+function inicializa()
+    chave = criarChave(3, 3)
+    table.insert(objetos, chave)
+end
+
+inicializa()
