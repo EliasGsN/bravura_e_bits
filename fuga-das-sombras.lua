@@ -7,7 +7,7 @@ jogador = {
     y = 68,
     corDeFundo = 2,
     quadroDeAnimacao = 1,
-
+    
     chaves = 0
 }
 
@@ -15,12 +15,14 @@ Constantes = {
     LARGURA_DA_TELA = 240,
     ALTURA_DA_TELA = 138,
     VELOCIDADE_ANIMACAO_JOGADOR = 0.1,
-
+   
     SPRITE_CHAVE = 364,
     SPRITE_PORTA = 366
 }
 
-objetos = {}
+objetos = {
+
+}
 
 function temColisaoComMapa(ponto)
     blocoX = ponto.x / 8
@@ -34,20 +36,28 @@ function temColisaoComMapa(ponto)
 end
 
 function moverPara(delta)
-
-    superiorEsquerdo = {
+				
+				local novaPosicao = {
+					x = jogador.x + delta.deltaX,
+					y = jogador.y + delta.deltaY
+				}				
+				if verificaColisaoComObjetos(novaPosicao) then
+					return
+				end
+				
+    local superiorEsquerdo = {
         x = jogador.x - 8 + delta.deltaX,
         y = jogador.y - 8 + delta.deltaY
     }
-    superiorDireito = {
+    local superiorDireito = {
         x = jogador.x + 7 + delta.deltaX,
         y = jogador.y - 8 + delta.deltaY
     }
-    inferiorDireito = {
+    local inferiorDireito = {
         x = jogador.x + 7 + delta.deltaX,
         y = jogador.y + 7 + delta.deltaY
     }
-    inferiorEsquerdo = {
+    local inferiorEsquerdo = {
         x = jogador.x - 8 + delta.deltaX,
         y = jogador.y + 7 + delta.deltaY
     }
@@ -104,7 +114,11 @@ function desenhaMapa()
 end
 
 function desenhaJogador()
-    spr(jogador.sprite, jogador.x - 8, jogador.y - 8, jogador.corDeFundo, 1, -- escala
+    spr(jogador.sprite, 
+    jogador.x - 8, 
+    jogador.y - 8, 
+    jogador.corDeFundo, 
+    1, -- escala
     0, -- espelhar
     0, -- rotacionar
     2, -- quantos blocos para direita
@@ -112,9 +126,17 @@ function desenhaJogador()
 end
 
 function desenhaObjetos()
-    for indice, objeto in pairs(objetos) do
-        spr(objeto.sprite, objeto.x - 8, objeto.y - 8, objeto.corDeFundo, 1, 0, 0, 2, 2)
-    end
+	for indice, objeto in pairs(objetos) do
+		spr(objeto.sprite,
+						objeto.x - 8,
+						objeto.y - 8,
+						objeto.corDeFundo,
+						1,
+						0,
+						0,
+						2,
+						2)
+	end
 end
 
 function desenha()
@@ -125,78 +147,84 @@ function desenha()
 end
 
 function fazColisaoDoJogadorComAChave(indice)
-    jogador.chaves = jogador.chaves + 1
-    table.remove(objetos, indice)
+	jogador.chaves = jogador.chaves + 1
+	table.remove(objetos, indice)
+	return false
 end
 
 function temColisao(objetoA, objetoB)
-    local esquerdaDeA = objetoA.x - 8
-    local direitaDeA = objetoA.x + 7
-    local baixoDeA = objetoA.y + 7
-    local cimaDeA = objetoA.y - 8
+	local esquerdaDeA = objetoA.x - 8
+	local direitaDeA = objetoA.x + 7
+	local baixoDeA = objetoA.y + 7
+	local cimaDeA = objetoA.y - 8
 
-    local esquerdaDeB = objetoB.x - 8
-    local direitaDeB = objetoB.x + 7
-    local baixoDeB = objetoB.y + 7
-    local cimaDeB = objetoB.y - 8
-
-    if esquerdaDeB > direitaDeA or direitaDeB < esquerdaDeA or cimaDeA > baixoDeB or baixoDeA < cimaDeB then
-        return false
-    end
-    return true
+	local esquerdaDeB = objetoB.x - 8
+	local direitaDeB = objetoB.x + 7
+	local baixoDeB = objetoB.y + 7
+	local cimaDeB = objetoB.y - 8
+	
+	if esquerdaDeB > direitaDeA or
+	   direitaDeB < esquerdaDeA or
+	   cimaDeA > baixoDeB or
+	   baixoDeA < cimaDeB then
+		return false
+	end
+	return true
 end
 
 function fazColisaoDoJogadorComAPorta(indice)
-    if jogador.chaves > 0 then
-        jogador.chaves = jogador.chaves - 1
-        table.remove(objetos, indice)
-    end
+	if jogador.chaves > 0 then
+				jogador.chaves = jogador.chaves - 1
+				table.remove(objetos, indice)
+				return false
+	end
+	return true
 end
 
-function verificaColisaoComObjetos()
-    for indice, objeto in pairs(objetos) do
-        if temColisao(jogador, objeto) then
-            if objeto.sprite == Constantes.SPRITE_CHAVE then
-                fazColisaoDoJogadorComAChave(indice)
-            elseif objeto.sprite == Constantes.SPRITE_PORTA then
-                fazColisaoDoJogadorComAPorta(indice)
-            end
-        end
-    end
+function verificaColisaoComObjetos(novaPosicao)
+	for indice, objeto in pairs(objetos) do
+		if temColisao(novaPosicao, objeto) then
+			if objeto.sprite == Constantes.SPRITE_CHAVE then
+				return fazColisaoDoJogadorComAChave(indice)
+			elseif objeto.sprite == Constantes.SPRITE_PORTA then
+				return fazColisaoDoJogadorComAPorta(indice)
+			end
+		end
+	end
+	return false
 end
 
 function TIC()
     atualiza()
-    verificaColisaoComObjetos()
     desenha()
 end
 
 function criaPorta(coluna, linha)
-    local porta = {
-        sprite = Constantes.SPRITE_PORTA,
-        x = coluna * 8 + 8,
-        y = linha * 8 + 8,
-        corDeFundo = 2
-    }
-    return porta
+ local porta = {
+ 	sprite = Constantes.SPRITE_PORTA,
+  x = coluna * 8 + 8,
+  y = linha * 8 + 8,
+  corDeFundo = 2
+ }
+ return porta
 end
 
 function criaChave(coluna, linha)
-    local chave = {
-        sprite = Constantes.SPRITE_CHAVE,
-        x = coluna * 8 + 8,
-        y = linha * 8 + 8,
-        corDeFundo = 2
-    }
-    return chave
+	local chave = {
+		sprite= Constantes.SPRITE_CHAVE,
+		x = coluna * 8 + 8,
+		y = linha * 8 + 8,
+		corDeFundo = 2
+	}
+	return chave
 end
 
 function inicializa()
-    chave = criaChave(3, 3)
-    table.insert(objetos, chave)
-
-    local porta = criaPorta(16, 7)
-    table.insert(objetos, porta)
+	chave = criaChave(3, 3)
+	table.insert(objetos, chave)
+	
+	local porta = criaPorta(16, 7)
+	table.insert(objetos, porta)
 end
 
 inicializa()
