@@ -1,21 +1,13 @@
 -- title:   Fuga das Sombras
+-- author:  Elias
 -- desc:    RPG de acao 2D
 -- script:  lua
-jogador = {
-    sprite = 260,
-    x = 24,
-    y = 110,
-    corDeFundo = 2,
-    quadroDeAnimacao = 1,
-
-    chaves = 0
-}
-
 Constantes = {
     LARGURA_DA_TELA = 240,
     ALTURA_DA_TELA = 138,
     VELOCIDADE_ANIMACAO_JOGADOR = 0.1,
 
+    SPRITE_INIMIGO = 292,
     SPRITE_CHAVE = 364,
     SPRITE_PORTA = 366,
 
@@ -26,14 +18,13 @@ Constantes = {
 objetos = {}
 
 function temColisaoComMapa(ponto)
-    blocoX = ponto.x / 8
-    blocoY = ponto.y / 8
-    blocoId = mget(blocoX, blocoY)
+    local blocoX = ponto.x / 8
+    local blocoY = ponto.y / 8
+    local blocoId = mget(blocoX, blocoY)
     if blocoId >= 128 then
         return true
-    else
-        return false
     end
+    return false
 end
 
 function moverPara(delta)
@@ -77,7 +68,7 @@ end
 
 function atualiza()
 
-    Direcao = {{
+    local Direcao = {{
         deltaX = 0,
         deltaY = -1
     }, {
@@ -91,7 +82,7 @@ function atualiza()
         deltaY = 0
     }}
 
-    AnimacaoJogador = {{256, 258}, {260, 262}, {264, 266}, {268, 270}}
+    local AnimacaoJogador = {{256, 258}, {260, 262}, {264, 266}, {268, 270}}
 
     for tecla = 0, 3 do
         if btn(tecla) then
@@ -174,6 +165,11 @@ function fazColisaoDoJogadorComAPorta(indice)
     return true
 end
 
+function fazColisaoDoJogadorComInimigo(indice)
+    inicializa()
+    return true
+end
+
 function verificaColisaoComObjetos(novaPosicao)
     for indice, objeto in pairs(objetos) do
         if temColisao(novaPosicao, objeto) then
@@ -181,6 +177,8 @@ function verificaColisaoComObjetos(novaPosicao)
                 return fazColisaoDoJogadorComAChave(indice)
             elseif objeto.sprite == Constantes.SPRITE_PORTA then
                 return fazColisaoDoJogadorComAPorta(indice)
+            elseif objeto.sprite == Constantes.SPRITE_INIMIGO then
+                return fazColisaoDoJogadorComInimigo(indice)
             end
         end
     end
@@ -212,12 +210,38 @@ function criaChave(coluna, linha)
     return chave
 end
 
+function criaInimigo(coluna, linha)
+    local inimigo = {
+        sprite = Constantes.SPRITE_INIMIGO,
+        x = coluna * 8 + 8,
+        y = linha * 8 + 8,
+        corDeFundo = 5
+    }
+    return inimigo
+end
+
 function inicializa()
+
+    objetos = {}
+
     chave = criaChave(3, 2)
     table.insert(objetos, chave)
 
     local porta = criaPorta(16, 7)
     table.insert(objetos, porta)
+
+    local inimigo = criaInimigo(20, 7)
+    table.insert(objetos, inimigo)
+
+    jogador = {
+        sprite = 260,
+        x = 24,
+        y = 110,
+        corDeFundo = 2,
+        quadroDeAnimacao = 1,
+
+        chaves = 0
+    }
 end
 
 inicializa()
