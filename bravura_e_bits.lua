@@ -3,8 +3,8 @@
 -- script:  lua
 jogador = {
     sprite = 260,
-    x = 100,
-    y = 68,
+    x = 24,
+    y = 110,
     corDeFundo = 2,
     quadroDeAnimacao = 1,
 
@@ -17,7 +17,10 @@ Constantes = {
     VELOCIDADE_ANIMACAO_JOGADOR = 0.1,
 
     SPRITE_CHAVE = 364,
-    SPRITE_PORTA = 366
+    SPRITE_PORTA = 366,
+
+    ID_SFX_CHAVE = 0,
+    ID_SFX_PORTA = 1
 }
 
 objetos = {}
@@ -135,6 +138,12 @@ end
 function fazColisaoDoJogadorComAChave(indice)
     jogador.chaves = jogador.chaves + 1
     table.remove(objetos, indice)
+    sfx(Constantes.ID_SFX_CHAVE, 60, -- nota
+    32, -- tempo
+    0, -- canal
+    8, -- volume
+    5) -- velocidade
+
     return false
 end
 
@@ -159,6 +168,7 @@ function fazColisaoDoJogadorComAPorta(indice)
     if jogador.chaves > 0 then
         jogador.chaves = jogador.chaves - 1
         table.remove(objetos, indice)
+        sfx(Constantes.ID_SFX_PORTA, 84, 32, 0, 8, 5)
         return false
     end
     return true
@@ -203,7 +213,7 @@ function criaChave(coluna, linha)
 end
 
 function inicializa()
-    chave = criaChave(3, 3)
+    chave = criaChave(3, 2)
     table.insert(objetos, chave)
 
     local porta = criaPorta(16, 7)
