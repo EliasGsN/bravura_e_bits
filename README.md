@@ -5,8 +5,8 @@ Este é um jogo RPG de ação 2D desenvolvido em Lua para a plataforma TIC-80.
 
 ## Informações do Jogo
 - **Linguagem:** Lua
-- **Versão:** 0.2
-- **Licença:** MIT License (altere isso para a licença de sua escolha)
+- **Versão:** 0.5
+- **Licença:** MIT License
 
 ## Gameplay
 O jogo permite controlar um jogador através de um mapa utilizando os botões direcionais.
