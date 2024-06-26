@@ -21,7 +21,7 @@ O jogo permite controlar um jogador através de um mapa utilizando os botões di
 Para executar o jogo, é necessário utilizar o TIC-80, um ambiente de desenvolvimento para jogos 8-bit.
 
 ### Instruções:
-1. Instale o TIC-80 em seu computador.
+1. Instale o TIC-80 em seu computador. `(https://tic80.com/)`
 2. Abra o TIC-80 e carregue o script Lua fornecido neste repositório.
 3. Execute o jogo utilizando a função `TIC()`.
 
