@@ -45,10 +45,6 @@ O código do jogo está estruturado da seguinte forma:
 - **Inicialização**: Inicializa o jogo, criando objetos e definindo o estado inicial do jogador.
 - **Loop Principal (TIC)**: Função principal do TIC-80 que atualiza e desenha o jogo a cada frame.
 
-## Licença
-
-Este projeto é licenciado sob a [MIT License](LICENSE).
-
 ## Contribuições
 
 Contribuições são bem-vindas! Se você encontrar bugs ou tiver ideias para melhorias, sinta-se à vontade para abrir uma issue ou enviar um pull request.
