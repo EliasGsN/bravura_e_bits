@@ -1,4 +1,4 @@
--- title:   Bravura & Bits
+-- title:   Bravura & Bits 
 -- author:  Elias
 -- desc:    RPG de acao 2D
 -- script:  lua
